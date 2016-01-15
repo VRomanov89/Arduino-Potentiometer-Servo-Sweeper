@@ -14,7 +14,7 @@ void setup() {
   test.attach(11);
   pinMode(pin_Button, INPUT);
 }
-// test
+// testing
 void loop() {
   if (recording == 0) {
   int sensorValue = analogRead(A0);
