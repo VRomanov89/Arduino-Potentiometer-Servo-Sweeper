@@ -9,20 +9,45 @@ int storage[800];
 int storage_loc = 0;
 int recording = 0;
 
+int servo_Speed = 130;     //servo speed in RPM
+int servo_Type = 180;      //360 for continuous
+
 void setup() {
   Serial.begin(9600);
   test.attach(11);
   pinMode(pin_Button, INPUT);
+  
+  if(servo_Type == 360)
+  {
+    test.write(90);
+  }
 }
 // testing
 void loop() {
   if (recording == 0) {
-  int sensorValue = analogRead(A0);
-  NewAnalogOut = map(sensorValue, 0, 1023, 0, 180);
-  if (abs(NewAnalogOut - AnalogOut) > 2) {
-    test.write(AnalogOut);
+    int sensorValue = analogRead(A0);
+    NewAnalogOut = map(sensorValue, 0, 1023, 0, 180);
+  //   if (abs(NewAnalogOut - AnalogOut) > 2) {
+    if(servo_Type == 180)
+    {
+      test.write(AnalogOut);
+    }
+    else
+    {
+      if(NewAnalogOut-AnalogOut>0)
+      {
+        test.write(180);    //Rotate CW
+        delay((((NewAnalogOut-AnalogOut)/360)/servo_Speed)*60000);
+        test.write(90);     //Stop
+      }
+      else
+      {
+        test.write(0);      //Rotate CCW
+        delay((((AnalogOut-NewAnalogOut)/360)/servo_Speed)*60000);
+        test.write(90);     //Stop
+      }
+    }
     AnalogOut = NewAnalogOut;
-  }
   }
   delay(1);
   if ( recording == 1) {
